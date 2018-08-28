@@ -27,16 +27,10 @@ public class TestController {
 	private String springApplicationName;
 	@Resource
 	private MabatisConfig mabatisConfig;
-	@Resource
-	private IHelper ihelper;
 	
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public String test(){
         return springApplicationName+uaa+defineConfig.getPname();
-    }
-    @RequestMapping(value = "/force", method = RequestMethod.GET)
-    public String force(){
-    	return ihelper.help();
     }
     @RequestMapping(value = "/my", method = RequestMethod.GET)
     public String my(){

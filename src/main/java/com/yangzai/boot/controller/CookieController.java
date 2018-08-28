@@ -13,7 +13,6 @@ public class CookieController {
 	@RequestMapping(value = "/health", method = RequestMethod.GET)
     public String health(HttpServletResponse response){
 		Cookie cookie = new Cookie("sessionId","098765");
-		cookie.setDomain("localhost");
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 //		cookie.setMaxAge(60*60);//存续一个小时
