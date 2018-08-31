@@ -3,6 +3,7 @@ package com.yangzai.log;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.log4j.MDC;
 import org.slf4j.Marker;
 
 import net.logstash.logback.marker.Markers;
@@ -12,9 +13,10 @@ import net.logstash.logback.marker.Markers;
  */
 public class LogUtil {
 	public static final String DEFAULT_FIELD_NAME="field";
+	public static final String INNER_TRACE_ID="traceId";
 	/**
 	 * 自定义单个field输出
-	 * log.info(LogUtil.field("member", member),null);
+	 * e.g log.info(LogUtil.field("member", member),null);
 	 * @param fieldName
 	 * @param object
 	 * @return
@@ -31,7 +33,7 @@ public class LogUtil {
 
 	/**
 	 * 自定义多个field输出
-	 * i.g log.info(LogUtil.field("list", list),null);
+	 * e.g log.info(LogUtil.field("list", list),null);
 	 * @param object
 	 * @return
 	 */
@@ -48,9 +50,18 @@ public class LogUtil {
 	 * 创建traceId
 	 * @return
 	 */
-	public static String createTraceId(){
+	private static String createTraceId(){
 		String uuid = UUID.randomUUID().toString();
 		uuid = uuid.toUpperCase().replace("‐", "");
 		return uuid;
+	}
+	public static void setTraceId(){
+		MDC.put(INNER_TRACE_ID, LogUtil.createTraceId());
+	}
+	public static void getTraceId(){
+		MDC.get(INNER_TRACE_ID);
+	}
+	public static void removeTraceId(){
+		MDC.remove(INNER_TRACE_ID);
 	}
 }
