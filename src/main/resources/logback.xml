@@ -21,7 +21,7 @@
 				<pattern>
 					<pattern>
 						{
-						"at":"%logger{50}:%method",
+						"method":"%logger{50}:%method",
 						"trace_id": "%X{X-B3-TraceId:-}",
 						"span_id":"%X{X-B3-SpanId:-}",
 						"parent_span_id": "%X{X-B3-ParentSpanId:-}",
