@@ -1,18 +1,20 @@
 package com.yangzai.log;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Marker;
 
 import net.logstash.logback.marker.Markers;
-
+/**
+ * 日志工具类 
+ * @author JohnnyLab
+ */
 public class LogUtil {
 	public static final String DEFAULT_FIELD_NAME="field";
 	/**
-	 * i.g {"member":{"uid":"0133","name":"john","gender":"male"}} 
-	 * i.g {"members":[{"uid":"11000","name":"john","gender":"male"},{"name2":"value2","name1":"value1"}]}
-	 * i.g {"author":"john"}
-	 * 
+	 * 自定义单个field输出
+	 * log.info(LogUtil.field("member", member),null);
 	 * @param fieldName
 	 * @param object
 	 * @return
@@ -28,8 +30,8 @@ public class LogUtil {
 	}
 
 	/**
-	 * i.g {"uid":"0133","name":"john","gender":"male"}
-	 * 
+	 * 自定义多个field输出
+	 * i.g log.info(LogUtil.field("list", list),null);
 	 * @param object
 	 * @return
 	 */
@@ -41,5 +43,14 @@ public class LogUtil {
 			return Markers.append(DEFAULT_FIELD_NAME, object);
 		}
 		return Markers.appendFields(object);
+	}
+	/**
+	 * 创建traceId
+	 * @return
+	 */
+	public static String createTraceId(){
+		String uuid = UUID.randomUUID().toString();
+		uuid = uuid.toUpperCase().replace("‐", "");
+		return uuid;
 	}
 }
