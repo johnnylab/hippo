@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<included>  
-	<!-- 应用程序输出日志的路径 -->
-	<property name="APPLICATION_LOG_FILE_HOME" value="/opt/logs" />
-	​
-	<!-- sql日志路径 -->
-	<property name="SQL_LOG_FILE_HOME" value="/opt/sql-logs" />
+<included>
 	<!-- 控制台输出日志的格式 -->
 	<property name="CONSOLE_LOG_PATTERN"
 		value="[%-5level] %d{HH:mm:ss} %logger{50}:%method  [%thread]-%-50msg%n " />
@@ -32,27 +27,24 @@
 					<logLevel>
 						<fieldName>level</fieldName>
 					</logLevel>
-					<message>
-						<fieldName>msg</fieldName>
-					</message>
-					<logstashMarkers />
-					<mdc />
 					<timestamp>
 						<fieldName>time</fieldName>
 						<pattern>yyyy-MM-dd HH:mm:ss</pattern>
 						<timeZone>GMT+8</timeZone>
 					</timestamp>
+					<message>
+						<fieldName>msg</fieldName>
+					</message>
+					<logstashMarkers />
+					<mdc />
 					<pattern>
 						<pattern>
 							{
 							"method":"%logger{50}:%method",
-							"trace_id":
-							"%X{X-B3-TraceId:-}",
-							"span_id":"%X{X-B3-SpanId:-}",
-							"parent_span_id": "%X{X-B3-ParentSpanId:-}",
-							"exportable_span_id": "%X{X-Span-Export:-}",
-							"from":"%X{X-B4-fromServiceName:-}",
-							"to":"%X{X-B4-toServiceName:-}",
+							"trace":"%X{X-B3-TraceId:-}",
+							"span":"%X{X-B3-SpanId:-}",
+							"parent":"%X{X-B3-ParentSpanId:-}",
+							"export":"%X{X-Span-Export:-}",
 							"thread": "%thread"
 							}
 						</pattern>
@@ -72,8 +64,4 @@
 			</encoder>
 		</appender>
 	</appender>
-	<root level="info">
-		<appender-ref ref="APPLICATION_LOG" />
-		<appender-ref ref="CONSOLE" />
-	</root>
 </included>
