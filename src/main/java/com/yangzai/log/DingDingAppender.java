@@ -22,7 +22,7 @@ import ch.qos.logback.core.status.ErrorStatus;
 public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 	// 回调地址
 	private volatile String webhooks;
-	// @手机号
+	// 手机号
 	private volatile String mobiles;
 	private volatile List<String> urlList;
 	private final Semaphore semaphore = new Semaphore(1);
@@ -31,32 +31,33 @@ public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 	private volatile CloseableHttpClient httpclient;
 
 	@Override
-    public void start() {
-        if (webhooks == null || webhooks.equals("")) {
-            addError("parameters webhooks is missing. Cannot start.");
-            return;
-        }
-        String[] urlArr = webhooks.split(",");
-        urlList = new ArrayList<String>(urlArr.length);
-        for(String url:urlArr){
-        	url = url.trim();
-        	if(url.startsWith("http")){
-        		urlList.add(url);
-        	}
-        }
-        if(urlList.size()==0){
-        	 addError("parameters webhooks dont have any permitted url");
-             return;
-        }
-        if (this.encoder == null) {
-            addStatus(new ErrorStatus("No encoder set for the appender named \"" + name + "\".", this));
-            return;
-        }
-        httpclient= HttpClients.createDefault();
-        ByteArrayOutputStream outputStream=new ByteArrayOutputStream(10*1024);
-        setOutputStream(outputStream);
-        super.start();
-    }
+	public void start() {
+		if (webhooks == null || webhooks.equals("")) {
+			addError("parameters webhooks is missing. Cannot start.");
+			return;
+		}
+		String[] urlArr = webhooks.split(",");
+		urlList = new ArrayList<String>(urlArr.length);
+		for (String url : urlArr) {
+			url = url.trim();
+			if (url.startsWith("http")) {
+				urlList.add(url);
+			}
+		}
+		if (urlList.size() == 0) {
+			addError("parameters webhooks dont have any correct url");
+			return;
+		}
+		if (this.encoder == null) {
+			addStatus(new ErrorStatus("No encoder set for the appender named \"" + name + "\".", this));
+			return;
+		}
+		httpclient = HttpClients.createDefault();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(10 * 1024);
+		setOutputStream(outputStream);
+		super.start();
+	}
+
 	@Override
 	public void stop() {
 		super.stop();
@@ -64,7 +65,7 @@ public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 			httpclient.close();
 		} catch (IOException e) {
 		}
-    }
+	}
 
 	@Override
 	protected void append(E eventObject) {
@@ -78,7 +79,7 @@ public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 			try {
 				notifyInDingDing(outputSteam.toByteArray());
 			} catch (IOException e) {
-			} finally{
+			} finally {
 				// 重置缓存
 				outputSteam.reset();
 			}
@@ -89,18 +90,17 @@ public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 	}
 
 	private void notifyInDingDing(byte[] bytes) throws ClientProtocolException, IOException {
-		if(urlList==null||urlList.size()==0){
+		if (urlList == null || urlList.size() == 0) {
 			return;
 		}
-		for(String url:urlList){
-			String msg = new String(bytes, "UTF-8");
+		String preMsg = new String(bytes, "UTF-8");
+		String outputMsg = templateText(preMsg);
 
+		for (String url : urlList) {
 			HttpPost httppost = new HttpPost(url);
 			httppost.addHeader("Content-Type", "application/json; charset=utf-8");
-
-			StringEntity se = new StringEntity(templateText(msg), "utf-8");
+			StringEntity se = new StringEntity(outputMsg, "utf-8");
 			httppost.setEntity(se);
-
 			HttpResponse response = httpclient.execute(httppost);
 			if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
 				failCounter.incrementAndGet();
@@ -109,8 +109,8 @@ public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 	}
 
 	/**
-	 * 1) 消息不支持\" 必须输入 \" 否则会有异常 
-	 * 2) 如果手机号在群中不存在，则请求任然成功，只是不会@群成员
+	 * 1) 消息不支持\" 必须输入 \" 否则会有异常 2) 如果手机号在群中不存在，则请求任然成功，只是不会@群成员
+	 * 
 	 * @return
 	 */
 	private String templateText(String msg) {
@@ -127,12 +127,15 @@ public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 	public void setMobiles(String mobiles) {
 		this.mobiles = mobiles;
 	}
+
 	public String getWebhooks() {
 		return webhooks;
 	}
+
 	public void setWebhooks(String webhooks) {
 		this.webhooks = webhooks;
 	}
+
 	public Encoder<E> getEncoder() {
 		return encoder;
 	}
@@ -140,5 +143,5 @@ public final class DingDingAppender<E> extends OutputStreamAppender<E> {
 	public void setEncoder(Encoder<E> encoder) {
 		this.encoder = encoder;
 	}
-	
+
 }

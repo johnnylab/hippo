@@ -2,8 +2,12 @@
 <configuration>
  	<!-- 应用程序输出日志的路径 -->
 	<property name="APPLICATION_LOG_FILE_HOME" value="/opt/logs" />
+	<!-- 钉钉机器人回调地址，支持逗号分隔多个地址 -->
 	<property name="DINGDING_WEBHOOK" value="https://oapi.dingtalk.com/robot/send?access_token=66c29ab4caa300568cf344966701a748848a79c79d787383e10464ddba953601" />
+	<!-- 钉钉消息@手机号，支持逗号分隔多个手机号 -->
 	<property name="DINGDING_MOBILES" value="17621257001" />
+	<!-- 引入模板文件 -->
+	<!-- 注：必须在声明完所有的property之后才能引入 -->
     <include resource="logback-common.xml"/>
 	<root level="info">
 		<appender-ref ref="NOTIFY_DINDDING" />
