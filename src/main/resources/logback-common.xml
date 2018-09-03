@@ -35,7 +35,12 @@
 						<fieldName>msg</fieldName>
 					</message>
 					<logstashMarkers />
-					<mdc />
+					<mdc>
+						<excludeMdcKeyName>X-B3-TraceId</excludeMdcKeyName>
+						<excludeMdcKeyName>X-B3-SpanId</excludeMdcKeyName>
+						<excludeMdcKeyName>X-B3-ParentSpanId</excludeMdcKeyName>
+						<excludeMdcKeyName>X-Span-Export</excludeMdcKeyName>
+					</mdc>
 					<pattern>
 						<pattern>
 							{
@@ -62,5 +67,63 @@
 				</providers>
 			</encoder>
 		</appender>
+	</appender>
+	<appender name="NOTIFY_DINDDING"
+		class="net.logstash.logback.appender.LoggingEventAsyncDisruptorAppender">
+		<appender  class="com.yangzai.log.DingDingAppender">
+			<webhooks>${DINGDING_WEBHOOK}</webhooks>
+			<mobiles>${DINGDING_MOBILES}</mobiles>
+			<encoder
+				class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+				<providers>
+					<logLevel>
+						<fieldName>level</fieldName>
+					</logLevel>
+					<timestamp>
+						<fieldName>time</fieldName>
+						<pattern>yyyy-MM-dd HH:mm:ss</pattern>
+						<timeZone>GMT+8</timeZone>
+					</timestamp>
+					<message>
+						<fieldName>msg</fieldName>
+					</message>
+					<logstashMarkers />
+					<mdc>
+						<excludeMdcKeyName>X-B3-TraceId</excludeMdcKeyName>
+						<excludeMdcKeyName>X-B3-SpanId</excludeMdcKeyName>
+						<excludeMdcKeyName>X-B3-ParentSpanId</excludeMdcKeyName>
+						<excludeMdcKeyName>X-Span-Export</excludeMdcKeyName>
+					</mdc>
+					<pattern>
+						<pattern>
+							{
+							"method":"%logger{50}:%method",
+							"trace":"%X{X-B3-TraceId:-}",
+							"span":"%X{X-B3-SpanId:-}",
+							"parent":"%X{X-B3-ParentSpanId:-}",
+							"export":"%X{X-Span-Export:-}",
+							"thread": "%thread"
+							}
+						</pattern>
+					</pattern>
+					<stackTrace>
+						<throwableConverter
+							class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+							<maxDepthPerThrowable>30</maxDepthPerThrowable>
+							<maxLength>2048</maxLength>
+							<shortenedClassNameLength>30</shortenedClassNameLength>
+							<exclude>^sun\.reflect\..*\.invoke</exclude>
+							<exclude>^net\.sf\.cglib\.proxy\.MethodProxy\.invoke</exclude>
+							<rootCauseFirst>true</rootCauseFirst>
+						</throwableConverter>
+					</stackTrace>
+				</providers>
+			</encoder>
+		</appender>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
 	</appender>
 </included>

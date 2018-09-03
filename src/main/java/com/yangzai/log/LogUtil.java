@@ -50,7 +50,7 @@ public class LogUtil {
 	 * 创建traceId
 	 * @return
 	 */
-	private static String createTraceId(){
+	public static String createTraceId(){
 		String uuid = UUID.randomUUID().toString();
 		uuid = uuid.toUpperCase().replace("‐", "");
 		return uuid;
